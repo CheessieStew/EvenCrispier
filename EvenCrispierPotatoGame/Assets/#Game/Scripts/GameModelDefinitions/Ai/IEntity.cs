@@ -1,4 +1,4 @@
-﻿namespace Scripts.GameModel.AbstractGame.AiDefinitions
+﻿namespace Scripts.GameModelDefinitions.Ai
 {
     public enum EntityKind
     {
@@ -28,16 +28,8 @@
         EntityKind Kind { get; }
         Sex Sex { get; }
         State State { get; }
-        int AppearanceCode { get; }
-        Emotion Emotion { get; }
+        string AppearanceCode { get; }
         Vector Position { get; }
-    }
-
-    public enum Emotion
-    {
-        Angry,
-        Happy,
-        Sad
     }
 
 }
