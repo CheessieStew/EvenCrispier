@@ -1,0 +1,16 @@
+{
+	
+	"MinPlantMass": 50,
+	
+	"MaxPlantMass": 500,
+	
+	"NewPlantFrequency": 5,
+
+	"MinGrowthRate": 5,
+
+	"MaxGrowthRate": 20,
+
+	"MovementDistanceScale": 10,
+
+	"InteractionDistance": 15
+}

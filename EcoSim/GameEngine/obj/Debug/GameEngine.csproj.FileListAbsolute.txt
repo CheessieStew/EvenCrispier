@@ -1,0 +1,8 @@
+D:\Git\EvenCrispier\EcoSim\GameEngine\bin\Debug\GameEngine.dll
+D:\Git\EvenCrispier\EcoSim\GameEngine\bin\Debug\GameEngine.pdb
+D:\Git\EvenCrispier\EcoSim\GameEngine\obj\Debug\GameEngine.csproj.CoreCompileInputs.cache
+D:\Git\EvenCrispier\EcoSim\GameEngine\obj\Debug\GameEngine.dll
+D:\Git\EvenCrispier\EcoSim\GameEngine\obj\Debug\GameEngine.pdb
+D:\Git\EvenCrispier\EcoSim\GameEngine\obj\Debug\GameEngine.csprojResolveAssemblyReference.cache
+D:\Git\EvenCrispier\EcoSim\GameEngine\bin\Debug\Newtonsoft.Json.dll
+D:\Git\EvenCrispier\EcoSim\GameEngine\bin\Debug\Newtonsoft.Json.xml

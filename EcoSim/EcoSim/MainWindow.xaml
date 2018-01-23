@@ -1,0 +1,55 @@
+﻿<Window x:Class="EcoSim.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EcoSim"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="220"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Margin="0 5 0 0" Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
+            <Label Content="Run in background:"/>
+            <CheckBox Name="BackgroundToggle" Uid="BackgroundToggle" VerticalAlignment="Stretch"  Click="TimeButton_Click" Margin="4 4 33 4" Padding="1 -1 1 1" VerticalContentAlignment="Center" Width="20" />
+            <Button Name="Slower" Uid="Slower" Click="TimeButton_Click" Content="&lt;|" Margin="4" Padding="1 -1 1 1" VerticalContentAlignment="Center" Width="20" />
+            <Button Name="Pause" Uid="Pause" Click="TimeButton_Click" Content="| |" Margin="4"  Padding="1 -1 1 1" VerticalContentAlignment="Center" Width="20"/>
+            <Button Name="Faster" Uid="Faster" Click="TimeButton_Click" Content="|&gt;" Margin="4"  Padding="1 -1 1 1" VerticalContentAlignment="Center" Width="20"/>
+            <Label Content="Timescale:" Margin="22,0,0,0"/>
+            <TextBox Background="Black" Foreground="White" Text="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Path=TimeMultiplier}" Margin="4" Width="20" AcceptsReturn="False"/>
+            <Label Content="Turn counter:"/>
+            <TextBox Name="TurnCounter" Background="Black" Foreground="White" IsReadOnly="True" Margin="4" Width="80" AcceptsReturn="False"/>
+            <Button Name="OnePlus" Uid="OnePlus" Click="TimeButton_Click" Content="+1" Margin="4"  Padding="1 -1 1 1" VerticalContentAlignment="Center" Width="20"/>
+        </StackPanel>
+        <Viewbox Stretch="Uniform" Grid.Row="1" Margin="4" Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Background="DarkOliveGreen">
+                <Canvas Margin="20" Name="WorldCanvas" Background="DarkSeaGreen" Width="100" Height="100" />
+            </Border>
+        </Viewbox>
+        <DataGrid SelectionMode="Single" Margin="5" Name="EntityDetails" CanUserResizeRows="False" VerticalScrollBarVisibility="Auto" CanUserResizeColumns="True" HorizontalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True" Binding="{Binding Name}" Width="5*"/>
+                <DataGridTextColumn IsReadOnly="True" Binding="{Binding Value}" Width="3*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DockPanel Grid.Column="1" Grid.Row="2" VerticalAlignment="Stretch" Height="Auto">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <Label Content="Entity count:"/>
+                <TextBlock Background="Black" Foreground="White" Text="{Binding EntityCount}" Margin="4" Width="20"/>
+            </StackPanel>
+            <DataGrid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="Auto" SelectionMode="Single" Margin="5" Name="EntitiesGrid" CanUserResizeRows="False" VerticalScrollBarVisibility="Visible" CanUserResizeColumns="True" HorizontalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False" SelectedCellsChanged="Entities_SelectedCellsChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn IsReadOnly="True"  Binding="{Binding Id}" Width="*"/>
+                    <DataGridTextColumn IsReadOnly="True"  Binding="{Binding BodyType}" Width="2*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </Grid>
+</Window>
