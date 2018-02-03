@@ -15,7 +15,7 @@ namespace GameEngine.Simple
         private class Animal : Entity, IInstructionDoer
         {
             public override int IntBodyType => 1;
-            private IBrain _brain;
+            public IBrain Brain;
             public int Energy { get; private set; }
             private AnimalSpecies _species;
             public AnimalSpecies Species
@@ -88,7 +88,7 @@ namespace GameEngine.Simple
                     Die();
                 if (Alive)
                 {
-                    _lastResult = _brain.GetNextInstruction(GetSensesReport()).Do(this);
+                    _lastResult = Brain.GetNextInstruction(GetSensesReport()).Do(this);
                 }
                 {
                     Health--;

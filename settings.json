@@ -1,16 +1,29 @@
 {
+	"InitialPlantCount": 20,
 	
-	"MinPlantMass": 50,
-	
-	"MaxPlantMass": 500,
-	
+	"MaxPlantCount": 30,
+
 	"NewPlantFrequency": 5,
 
-	"MinGrowthRate": 5,
+	"MinPlantMass": 100,
 
-	"MaxGrowthRate": 20,
+	"MaxPlantMass": 500,
 
-	"MovementDistanceScale": 10,
+	"MinGrowthRate": 30,
 
-	"InteractionDistance": 15
+	"MaxGrowthRate": 50,
+
+	"MovementSpeed": 20,
+
+	"InteractionDistance": 22,
+
+	"BiteSize": 100,
+
+	"StomachCapacity": 2000,
+
+	"SightRange": 88,
+
+	"PassiveWork": 3,
+
+	"MovementWork": 5
 }

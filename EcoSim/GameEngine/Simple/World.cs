@@ -35,10 +35,13 @@ namespace GameEngine.Simple
 
         private EntityFactory _factory;
 
-        public World(EntityFactory factory, Settings settings, List<AnimalSpecies> speciesList)
+        private Func<IBrain> _brainFac;
+
+        public World(EntityFactory factory, Settings settings, List<AnimalSpecies> speciesList, Func<IBrain> brainFac)
         {
             Settings = settings;
             SpeciesList = speciesList;
+            _brainFac = brainFac;
             _factory = factory;
         }
 
@@ -60,7 +63,7 @@ namespace GameEngine.Simple
 
         private void CreateAnimal(AnimalSpecies s, Vector2 position)
         {
-            var newEntity = _factory.GetEntity(this, "Animal", (Action<IEntity>)VanishEntity, s, position);
+            var newEntity = _factory.GetEntity(this, "Animal", (Action<IEntity>)VanishEntity, s, position, _brainFac());
             if (!(newEntity is Entity e))
                 throw new InvalidOperationException();
             _entities[newEntity.Id] = e;

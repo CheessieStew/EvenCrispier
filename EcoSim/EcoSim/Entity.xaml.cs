@@ -79,7 +79,7 @@ namespace EcoSim
 
         public string BodyType => _inner.BodyType;
 
-        private float _lastX, _lastY;
+        private float _lastX, _lastY, _currentX, _currentY;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -92,12 +92,16 @@ namespace EcoSim
         public Entity Visual { get; internal set; }
 
         public IList<EntityVariable> Variables => _inner.Variables;
-        
+
+
         public void OnUpdatePosition()
         {
-            _lastX = _inner.XPos;
-            _lastY = _inner.YPos;
+            _lastX = _currentX;
+            _lastY = _currentY;
+            _currentX = _inner.XPos;
+            _currentY = _inner.YPos;
             LastUpdate = DateTime.Now;
+
         }        
     }
 }

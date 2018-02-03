@@ -6,7 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameEngine.Simple
+namespace GameEngine.Grazing
 {
     public abstract partial class Entity : IEntity
     {
@@ -32,17 +32,17 @@ namespace GameEngine.Simple
 
         public IList<EntityVariable> Variables => _descriptions.Values.ToList();
 
-        public int Health { get; protected set; }
-        public int MaxHealth { get; protected set; }
+        public virtual int Mass { get; protected set; }
+        public virtual int MaxMass { get; protected set; }
 
         
         private Entity()
         {
             AddDescription("Id", () => Id);
-            AddDescription("Health", () => Health);
-            AddDescription("MaxHealth", () => MaxHealth);
+            AddDescription("MaxMass", () => MaxMass);
             AddDescription("XPos", () => XPos);
             AddDescription("YPos", () => YPos);
+            AddDescription("MassLeft", () => Mass);
         }
 
         private void AddDescription(string name, EntityVariable.DescriptionAccessor accessor)
@@ -64,6 +64,8 @@ namespace GameEngine.Simple
         {
             BodyType = this.IntBodyType,
             Id = this.Id,
+            AvailableMass = this.Mass,
+            Position = _position,
             PositionX = XPos,
             PositionY = YPos,
         };
@@ -71,32 +73,17 @@ namespace GameEngine.Simple
 
         public class EntityDescription
         {
-            /// <summary>
-            /// 0/1, plant/animal
-            /// </summary>
             public int BodyType;
-            /// <summary>
-            /// unique for all entities
-            /// </summary>
             public int Id;
-            /// <summary>
-            /// ammount of food in this entity
-            /// </summary>
-            public float Mass;
-
+            public int AvailableMass;
+            public Vector2 Position;
             public float PositionX;
             public float PositionY;
         }
 
         protected abstract int GetEaten(int biteSize, Entity e);
 
-        private bool TakeDamage(int dmg, Entity e)
-        {
-            Health -= dmg;
-            return true;
-        }
-
-        public class SimpleEntityFactory : EntityFactory
+        public class GrazingEntityFactory : EntityFactory
         {
             protected override IEntity MakeEntity(int id, IWorld world, object[] args)
             {
@@ -112,30 +99,28 @@ namespace GameEngine.Simple
                 switch (type)
                 {
                     case "Animal":
-                        if (!(args[2] is AnimalSpecies species))
+                        if (!(args[2] is Vector2 position))
                             throw new InvalidOperationException();
-                        if (!(args[3] is Vector2 position))
-                            throw new InvalidOperationException();
-                        if (!(args[4] is IBrain brain))
+                        if (!(args[3] is IBrain brain))
                             throw new InvalidOperationException();
                         return new Animal()
                         {
+                            
+                            Mass = w.Settings.StomachCapacity / 2,
                             _id = id,
                             _world = w,
                             Vanish = vanish,
-                            Species = species,
                             _position = position,
                             Brain = brain
                         };
                     case "Plant":
-                        if (!(args[2] is int regrowthRate))
+                        if (!(args[2] is int mass))
                             throw new InvalidOperationException();
-                        if (!(args[3] is int mass))
+                        if (!(args[3] is int regrowthRate))
                             throw new InvalidOperationException();
                         return new Plant()
                         {
-                            MaxHealth = 100,
-                            Health = 100,
+                            MaxMass = mass,
                             Mass = mass,
                             RegrowthRate = regrowthRate,
                             Vanish = vanish,

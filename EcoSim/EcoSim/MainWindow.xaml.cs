@@ -3,19 +3,14 @@ using GameEngine.Mock;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace EcoSim
 {
@@ -27,10 +22,13 @@ namespace EcoSim
         enum Ruleset
         {
             Mock,
-            Simple
+            Simple,
+            Grazing
         }
+        private Ruleset _ruleset = Ruleset.Grazing;
 
-        private Ruleset _ruleset = Ruleset.Simple;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private const int BaseWorldTick = 200;
         private int _actualWorldTick;
 
@@ -77,7 +75,7 @@ namespace EcoSim
 
             if (result != true)
             {
-                Application.Current.Shutdown();
+                return null;
             }
             return dlg.FileName;
         }
@@ -94,11 +92,19 @@ namespace EcoSim
                     _world = new MockWorld(new MockEntity.MockEntityFactory());
                     break;
                 case Ruleset.Simple:
-                    
                     var settings = GameEngine.Simple.Settings.Load(PickFile("Choose settings file"));
-
                     var speciesList = GameEngine.Simple.AnimalSpecies.Load(PickFile("Choose species list file"));
-                    _world = new GameEngine.Simple.World(new GameEngine.Simple.Entity.SimpleEntityFactory(), settings, speciesList);
+                    _world = new GameEngine.Simple.World(new GameEngine.Simple.Entity.SimpleEntityFactory(), settings, speciesList, () => new Simple.StupidBrain());
+                    break;
+                case Ruleset.Grazing:
+                    var grazingSettingsFile = PickFile("Choose settings file, cancel for default");
+                    var grazingSettings = grazingSettingsFile!=null
+                        ? GameEngine.Grazing.Settings.Load(grazingSettingsFile)
+                        : GameEngine.Grazing.Settings.Default;
+                    var brain = new Grazing.QLearningBrainOne();
+                    brain.Reset();
+                    _world = new GameEngine.Grazing.World(new GameEngine.Grazing.Entity.GrazingEntityFactory(),
+                        grazingSettings, () => brain);
                     break;
             }
             _world.NewEntity += _world_NewEntity;
@@ -140,7 +146,7 @@ namespace EcoSim
             }
         }
 
-        public void DoFastProcess()
+        private void DoFastProcess()
         {
             Dispatcher.Invoke(BeginFastProcess);
 
@@ -173,8 +179,7 @@ namespace EcoSim
             Faster.IsEnabled = true;
         }
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        bool tick = false;
 
         private void UpdateVisuals()
         {
@@ -187,11 +192,19 @@ namespace EcoSim
             }
             foreach (var kvp in _entitiesDictionary)
             {
+                
                 var entity = kvp.Value;
                 var progress = ((float)(DateTime.Now - entity.LastUpdate).TotalMilliseconds) / _actualWorldTick;
-                progress = Math.Min(progress, 1);
-                Canvas.SetLeft(entity.Visual, entity.XPos(progress));
-                Canvas.SetTop(entity.Visual, entity.YPos(progress));
+                if (progress <= 1)
+                {
+                    Canvas.SetLeft(entity.Visual, entity.XPos(progress));
+                    Canvas.SetTop(entity.Visual, entity.YPos(progress));
+                }
+                if (entity.BodyType == "Animal")
+                {                                        
+                    tick = !tick;
+                    //WorldCanvas.Background = tick ? System.Windows.Media.Brushes.AliceBlue : System.Windows.Media.Brushes.Black;
+                }
             }
             EntityDetails.Items.Refresh();
         }
