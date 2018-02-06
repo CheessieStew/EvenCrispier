@@ -22,7 +22,6 @@ namespace EcoSim
         enum Ruleset
         {
             Mock,
-            Simple,
             Grazing
         }
         private Ruleset _ruleset = Ruleset.Grazing;
@@ -80,7 +79,26 @@ namespace EcoSim
             return dlg.FileName;
         }
 
-
+        private GameEngine.Grazing.IBrain PickBrain(GameEngine.Grazing.Settings settings)
+        {
+            switch(settings.Brain)
+            {
+                
+                case "Mark0":
+                    var mk0Brain = new Grazing.QLearningBrainMk0();
+                    mk0Brain.CloseRange = settings.InteractionDistance - 1;
+                    mk0Brain.StartRandomFactor = settings.BrainRandomFactor;
+                    mk0Brain.RandomFactorMultiplier = settings.BrainRandomFactorMultiplier;
+                    return mk0Brain;
+                case "Mark1":
+                default:
+                    var mk1Brain = new Grazing.QLearningBrainMk1();
+                    mk1Brain.CloseRange = settings.InteractionDistance - 1;
+                    mk1Brain.StartRandomFactor = settings.BrainRandomFactor;
+                    mk1Brain.RandomFactorMultiplier = settings.BrainRandomFactorMultiplier;
+                    return mk1Brain;
+            }
+        }
 
         public MainWindow()
         {
@@ -91,20 +109,34 @@ namespace EcoSim
                 case Ruleset.Mock:
                     _world = new MockWorld(new MockEntity.MockEntityFactory());
                     break;
-                case Ruleset.Simple:
-                    var settings = GameEngine.Simple.Settings.Load(PickFile("Choose settings file"));
-                    var speciesList = GameEngine.Simple.AnimalSpecies.Load(PickFile("Choose species list file"));
-                    _world = new GameEngine.Simple.World(new GameEngine.Simple.Entity.SimpleEntityFactory(), settings, speciesList, () => new Simple.StupidBrain());
-                    break;
                 case Ruleset.Grazing:
                     var grazingSettingsFile = PickFile("Choose settings file, cancel for default");
                     var grazingSettings = grazingSettingsFile!=null
                         ? GameEngine.Grazing.Settings.Load(grazingSettingsFile)
                         : GameEngine.Grazing.Settings.Default;
-                    var brain = new Grazing.QLearningBrainOne();
+                    var brain = PickBrain(grazingSettings);
                     brain.Reset();
-                    _world = new GameEngine.Grazing.World(new GameEngine.Grazing.Entity.GrazingEntityFactory(),
+                    
+                    var w = new GameEngine.Grazing.World(new GameEngine.Grazing.Entity.GrazingEntityFactory(),
                         grazingSettings, () => brain);
+                    w.Log += str => Dispatcher.Invoke(()=>
+                    {
+                        LogBox.AppendText("\n" + str);
+                        LogBox.ScrollToEnd();
+                    });
+                    _world = w;
+                    ResetBrain.Click += (o, args) =>
+                    {
+                        brain.Reset();
+                    };
+                    ResetCounter.Click += (o, args) =>
+                    {
+                        w.ResetCounter();
+                    };
+                    Kill.Click += (o, args) =>
+                    {
+                        w.KillAnimal();
+                    };
                     break;
             }
             _world.NewEntity += _world_NewEntity;

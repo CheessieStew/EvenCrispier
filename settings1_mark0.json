@@ -1,0 +1,37 @@
+{
+	"Note": "These easy settings allow the mark1 brain to learn to never die during a single lifespan",
+	
+	"Brain": "Mark0",
+	
+	"InitialPlantCount": 20,
+	
+	"MaxPlantCount": 50,
+
+	"NewPlantFrequency": 5,
+
+	"MinPlantMass": 100,
+
+	"MaxPlantMass": 500,
+
+	"MinGrowthRate": 30,
+ 
+	"MaxGrowthRate": 50,
+
+	"MovementSpeed": 20,
+
+	"InteractionDistance": 22,
+
+	"BiteSize": 100,
+
+	"StomachCapacity": 5000,
+
+	"SightRange": 88,
+
+	"PassiveWork": 3,
+
+	"MovementWork": 5,
+	
+	"BrainRandomFactor": 0.00006,
+	
+	"BrainRandomFactorMultiplier": 0.99994
+}

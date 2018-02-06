@@ -80,9 +80,9 @@ namespace GameEngine.Grazing
                 if (Alive)
                 {
                     Age++;
-                    Mass -= _world.Settings.PassiveWork;
                     _lastInstruction = Brain.GetNextInstruction(GetSensesReport());
                     _lastResult = _lastInstruction.Do(this);
+                    Mass -= _world.Settings.PassiveWork;
                 }
                 else
                 {
@@ -106,6 +106,13 @@ namespace GameEngine.Grazing
             {
                 return 0;
             }
+
+            internal override void Kill()
+            {
+                Die();
+                Vanish?.Invoke(this);
+            }
         }
+
     }
 }

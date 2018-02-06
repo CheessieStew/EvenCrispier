@@ -45,9 +45,16 @@ namespace GameEngine.Grazing
 
             protected override int GetEaten(int biteSize, Entity e)
             {
-                var chunk = Math.Max(Mass, biteSize);
+                var chunk = Math.Min(Mass, biteSize);
                 Mass -= chunk;
                 return chunk;
+            }
+
+
+            internal override void Kill()
+            {
+                Die();
+                Vanish?.Invoke(this);
             }
         }
         

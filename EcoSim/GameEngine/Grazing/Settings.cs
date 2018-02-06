@@ -72,6 +72,9 @@ namespace GameEngine.Grazing
         private Settings() { }
 
         public static Settings Default = new Settings();
+        public float BrainRandomFactor = 0.001f;
+        public float BrainRandomFactorMultiplier = 0.9999f;
+        public string Brain = "Mark1";
 
         public static Settings Load(string fileName)
         {

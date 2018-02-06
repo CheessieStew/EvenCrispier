@@ -141,7 +141,25 @@ namespace GameEngine.Grazing
             _entities[newEntity.Id] = e;
             NewEntity?.Invoke(newEntity);
         }
+        
 
+        public void KillAnimal()
+        {
+            _animal.Kill();
+            Log($"killed by user");
+        }
+
+        public void ResetCounter()
+        {
+            _turnCounter = 0;
+            Log($"turn counter set to 0");
+
+        }
+
+        private List<double> _ages = new List<double>();
+
+        public event Action<string> Log;
+        private Entity _animal;
 
         private void CreateAnimal()
         {
@@ -149,14 +167,18 @@ namespace GameEngine.Grazing
                 "Animal",
                 (Action<IEntity>)(animal =>
                 {
+                    var age = animal.Variables.First(v => v.Name == "Age").Value;
+                    _ages.Add((double)(int)age);
+                    Log($"{TurnCounter}, {age}, {_ages.Sum() / _ages.Count}");
                     VanishEntity(animal);
                     _brainFac().NewGame();
                     CreateAnimal();
                 })
-                , 
-                _dimensions / 2, _brainFac());
+                ,
+                new Vector2((float)(1 + Rng.NextDouble() * (Dimensions.X - 2)), (float)(1 + Rng.NextDouble() * (Dimensions.Y - 2))), _brainFac());
             if (!(newEntity is Entity e))
                 throw new InvalidOperationException();
+            _animal = e;
             _entities[newEntity.Id] = e;
             NewEntity?.Invoke(newEntity);
         }

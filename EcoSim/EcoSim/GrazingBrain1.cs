@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Entity = GameEngine.Grazing.Entity;
 namespace EcoSim.Grazing
 {
-    class QLearningBrainOne : IBrain
+    class QLearningBrainMk1 : IBrain
     {
         public object GetInternal()
         {
@@ -23,12 +23,10 @@ namespace EcoSim.Grazing
         }
 
         private GameState _state;
-        private float _targetX;
-        private float _targetY;
         private Random _rng = new Random();
         public float Discount = 0.8f;
-        public float RandomActionChance = 0.1f;
-        public float RandomFactor = -0.01f;
+        public float RandomFactor;
+        public float RandomFactorMultiplier = 0.9999f;
         public float CloseRange = 21;
         public float MediumRange = 44;
         private Dictionary<Action, float>[] _qTable;
@@ -36,51 +34,58 @@ namespace EcoSim.Grazing
         private Action _lastAction;
         private State _lastState;
         private float _lastHunger;
-        
+        public float StartRandomFactor = 0.001f;
+
         public Instruction GetNextInstruction(SensesReport report)
         {
-            _state.ApplyReport(report);
-            //apply the current reward for last action
-            if (_lastHunger > 0)
-                _qTable[_lastState.Compressed][_lastAction] = 
-                    (_lastHunger - _state.Report.Hunger)
-                    + Discount * Action.Possibillities.Max(a => QValue(_state.Value, a));
-            _lastHunger = _state.Report.Hunger;
-            _lastState = _state.Value;
+            lock (this)
+            {
+                _state.ApplyReport(report);
+                //apply the current reward for last action
+                if (_lastHunger > 0)
+                    _qTable[_lastState.Compressed][_lastAction] =
+                        (_lastHunger - _state.Report.Hunger)
+                        + Discount * Action.Possibillities.Max(a => QValue(_state.Value, a));
+                _lastHunger = _state.Report.Hunger;
+                _lastState = _state.Value;
 
-            _lastAction = PickAction();
-            return _lastAction.ToInstruction(_state);
+                _lastAction = PickAction();
+                return _lastAction.ToInstruction(_state);
+            }
         }
         
         private Action PickAction()
         {
-            RandomFactor *= 0.999f;
-            RandomActionChance *= 0.999f;
-            var possibillities = Action.Possibillities.
-                Select(a => (action: a, value: _rng.NextDouble() * RandomFactor + QValue(_lastState, a))) //penalty for this action
-                .OrderBy(av => av.value); //lowest-penalty action first
-                
+
+            RandomFactor *= RandomFactorMultiplier;
+            IEnumerable<(Action action, float value)> possibilities = Action.Possibillities.
+                Select(a => (action: a, value: QValue(_lastState, a))).OrderByDescending(av => av.value);
+            var minv = possibilities.Last().value;
+            possibilities = possibilities
+                .Select(av => (av.action, (float)Math.Pow(av.value - minv + RandomFactor, 2)));
+            var sumv = possibilities.Sum(av => av.value);
+            possibilities = possibilities
+                .Select(av => (av.action, av.value / sumv));
             var roll = _rng.NextDouble();
-            if (roll >= RandomActionChance)
-                return possibillities.First().action;
-            roll = _rng.NextDouble();
-            var chance = 0.5;
-            foreach (var av in possibillities.Skip(1))
+            foreach (var av in possibilities)
             {
-                roll -= chance;
+                roll -= av.value;
                 if (roll <= 0)
                     return av.action;
-                chance /= 2;
             }
             return new Action() { Kind = Action.ActionKind.Nothing };
         }
 
         public void Reset()
         {
-            _qTable = new Dictionary<Action, float>[State.MaxValue];
-            for (int i = 0; i < State.MaxValue; i++)
-                _qTable[i] = new Dictionary<Action, float>();
-            _state = new GameState(this);
+            lock (this)
+            {
+                RandomFactor = StartRandomFactor;
+                _qTable = new Dictionary<Action, float>[State.MaxValue];
+                for (int i = 0; i < State.MaxValue; i++)
+                    _qTable[i] = new Dictionary<Action, float>();
+                _state = new GameState(this);
+            }
         }
 
         public void NewGame()
@@ -215,7 +220,7 @@ namespace EcoSim.Grazing
                         res.CloseFoodDirections |= FoodRich(i, CloseMassesAvailable) ? (byte)(1 << i) : (byte)0;
                         res.MediumFoodDirections |= FoodRich(i, MediumMassesAvailable) ? (byte)(1 << i) : (byte)0;
                     };
-                    res.Hunger = (byte)(Penalty * (1 << 3 - 1));
+                    res.Hunger = (byte)(Penalty * ((1 << 3) - 1));
                     return res;
                 }
             }
@@ -231,8 +236,8 @@ namespace EcoSim.Grazing
 
             public SensesReport Report { get; private set; }
 
-            private QLearningBrainOne _brain;
-            public GameState(QLearningBrainOne b)
+            private QLearningBrainMk1 _brain;
+            public GameState(QLearningBrainMk1 b)
             {
                 _brain = b;
                 RoundedMassesAvailable = new float[Directions];
@@ -287,17 +292,5 @@ namespace EcoSim.Grazing
             }
  
         }
-    }
-
-    internal static class MathUtils
-    {
-        public static double ToDegrees(this float a) => a * 180 / Math.PI;
-
-        public static float VectorAngle(this Vector2 v)
-        {
-            var res = (Math.Atan2(v.Y, v.X));
-            return (float)(res < 0 ? res + Math.PI * 2 : res);
-        }
-
     }
 }

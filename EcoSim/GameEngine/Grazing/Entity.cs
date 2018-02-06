@@ -81,6 +81,9 @@ namespace GameEngine.Grazing
             public float PositionY;
         }
 
+        internal abstract void Kill();
+
+
         protected abstract int GetEaten(int biteSize, Entity e);
 
         public class GrazingEntityFactory : EntityFactory
