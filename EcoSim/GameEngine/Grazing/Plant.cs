@@ -29,18 +29,12 @@ namespace GameEngine.Grazing
                 {
                     Mass = Math.Min(MaxMass, Mass + RegrowthRate);
                 }
-                {
-                    Mass--;
-                    if (Mass < -20)
-                        Vanish?.Invoke(this);
-                }
-
             }
 
             protected override void Die()
             {
                 base.Die();
-                RegrowthRate = 0;
+                Vanish?.Invoke(this);
             }
 
             protected override int GetEaten(int biteSize, Entity e)

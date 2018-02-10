@@ -1,5 +1,4 @@
 ﻿using GameEngine.Api;
-using GameEngine.Simple;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -66,7 +65,8 @@ namespace GameEngine.Grazing
 
             public IEnumerator<KeyValuePair<int, IEntity>> GetEnumerator()
             {
-                throw new InvalidOperationException();
+                foreach (var kvp in _inner)
+                    yield return new KeyValuePair<int, IEntity>(kvp.Key, kvp.Value);
             }
 
             public bool Remove(int key)
@@ -155,9 +155,7 @@ namespace GameEngine.Grazing
             Log($"turn counter set to 0");
 
         }
-
-        private List<double> _ages = new List<double>();
-
+        
         public event Action<string> Log;
         private Entity _animal;
 
@@ -167,12 +165,12 @@ namespace GameEngine.Grazing
                 "Animal",
                 (Action<IEntity>)(animal =>
                 {
+
                     var age = animal.Variables.First(v => v.Name == "Age").Value;
-                    _ages.Add((double)(int)age);
-                    Log($"{TurnCounter}, {age}, {_ages.Sum() / _ages.Count}");
+                    Log($"{TurnCounter}\t{age}");
                     VanishEntity(animal);
                     _brainFac().NewGame();
-                    CreateAnimal();
+                    Initialize();
                 })
                 ,
                 new Vector2((float)(1 + Rng.NextDouble() * (Dimensions.X - 2)), (float)(1 + Rng.NextDouble() * (Dimensions.Y - 2))), _brainFac());
@@ -192,6 +190,12 @@ namespace GameEngine.Grazing
 
         public void Initialize()
         {
+            foreach (var e in _entities.Values.ToList())
+            {
+                VanishEntity(e);
+            }
+            _plantCount = 0;
+            _factory.Reset();
             for (int i = 0; i < Settings.InitialPlantCount; i++)
             {
                 CreatePlant();

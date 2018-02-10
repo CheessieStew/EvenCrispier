@@ -19,13 +19,6 @@ namespace EcoSim
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        enum Ruleset
-        {
-            Mock,
-            Grazing
-        }
-        private Ruleset _ruleset = Ruleset.Grazing;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private const int BaseWorldTick = 200;
@@ -81,36 +74,36 @@ namespace EcoSim
 
         private GameEngine.Grazing.IBrain PickBrain(GameEngine.Grazing.Settings settings)
         {
-            switch(settings.Brain)
+            GameEngine.Grazing.IBrain brain;
+            switch (settings.Brain)
             {
-                
-                case "Mark0":
-                    var mk0Brain = new Grazing.QLearningBrainMk0();
-                    mk0Brain.CloseRange = settings.InteractionDistance - 1;
-                    mk0Brain.StartRandomFactor = settings.BrainRandomFactor;
-                    mk0Brain.RandomFactorMultiplier = settings.BrainRandomFactorMultiplier;
-                    return mk0Brain;
                 case "Mark1":
                 default:
-                    var mk1Brain = new Grazing.QLearningBrainMk1();
-                    mk1Brain.CloseRange = settings.InteractionDistance - 1;
-                    mk1Brain.StartRandomFactor = settings.BrainRandomFactor;
-                    mk1Brain.RandomFactorMultiplier = settings.BrainRandomFactorMultiplier;
-                    return mk1Brain;
+                    brain = new Grazing.QLearningBrainMk1();
+                    break;
+                case "Mark0":
+                    brain = new Grazing.QLearningBrainMk0();
+                    break;
             }
+
+            brain.CloseRange = settings.InteractionDistance - 1;
+            brain.ProbabilityExponent = settings.BrainProbabilityExponent;
+            brain.Discount = settings.BrainDiscount;
+            brain.StartLearningRate = settings.BrainLearningRate;
+            brain.LearningRateDamping = settings.BrainLearningRateDamping;
+            brain.StartBaseActionScore = settings.BrainBaseActionScore;
+            brain.BaseActionScoreDamping = settings.BrainBaseActionScoreDamping;
+            return brain;
         }
+        
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
-            switch(_ruleset)
-            {
-                case Ruleset.Mock:
-                    _world = new MockWorld(new MockEntity.MockEntityFactory());
-                    break;
-                case Ruleset.Grazing:
+          
                     var grazingSettingsFile = PickFile("Choose settings file, cancel for default");
+                    Title = $"EcoSim: {(grazingSettingsFile != null ? System.IO.Path.GetFileName(grazingSettingsFile) : "default")}";
                     var grazingSettings = grazingSettingsFile!=null
                         ? GameEngine.Grazing.Settings.Load(grazingSettingsFile)
                         : GameEngine.Grazing.Settings.Default;
@@ -136,9 +129,8 @@ namespace EcoSim
                     Kill.Click += (o, args) =>
                     {
                         w.KillAnimal();
+                        UpdateVisualsSnap();
                     };
-                    break;
-            }
             _world.NewEntity += _world_NewEntity;
             _world.EntityVanished += _world_EntityVanished;
             _world.Initialize();
@@ -152,8 +144,9 @@ namespace EcoSim
                 }
 
             }, null, 0, _actualWorldTick);
-
-            _visualTimer = new Timer(state => Dispatcher.Invoke(UpdateVisuals), null, 0, 25);
+            var fps = App.Args.Length > 0 && int.TryParse(App.Args[0], out int i) ? i : 20;
+            
+            _visualTimer = new Timer(state => Dispatcher.Invoke(UpdateVisuals), null, 0, 1000 / fps);
             WorldCanvas.Height = _world.Height;
             WorldCanvas.Width = _world.Width;
             EntitiesGrid.ItemsSource = _entitiesDictionary.Values;
@@ -205,69 +198,86 @@ namespace EcoSim
 
         private void EndFastProcess()
         {
-            TimeMultiplier = _savedTimeMultiplier;
-            Pause.IsEnabled = true;
-            Slower.IsEnabled = true;
-            Faster.IsEnabled = true;
+            lock (this)
+            {
+                _toDo.Clear();
+                foreach (var wrp in _entitiesDictionary.Values.ToList())
+                {
+                    RemoveEntity(wrp);
+                }
+                foreach (var entity in _world.Entities)
+                {
+                    AddEntity(entity.Value);
+                }
+                TimeMultiplier = _savedTimeMultiplier;
+                Pause.IsEnabled = true;
+                Slower.IsEnabled = true;
+                Faster.IsEnabled = true;
+            }
+            UpdateVisualsSnap();
         }
-
-        bool tick = false;
 
         private void UpdateVisuals()
         {
-            TurnCounter.Text = _world.TurnCounter.ToString();
-            if (TimeMultiplier <= 0)
-                return;
-            while (_toDo.Any())
+            lock (this)
             {
-                _toDo.Dequeue()();
-            }
-            foreach (var kvp in _entitiesDictionary)
-            {
-                
-                var entity = kvp.Value;
-                var progress = ((float)(DateTime.Now - entity.LastUpdate).TotalMilliseconds) / _actualWorldTick;
-                if (progress <= 1)
+                TurnCounter.Text = _world.TurnCounter.ToString();
+                if (TimeMultiplier <= 0)
+                    return;
+                while (_toDo.Any())
                 {
-                    Canvas.SetLeft(entity.Visual, entity.XPos(progress));
-                    Canvas.SetTop(entity.Visual, entity.YPos(progress));
+                    _toDo.Dequeue()();
                 }
-                if (entity.BodyType == "Animal")
-                {                                        
-                    tick = !tick;
-                    //WorldCanvas.Background = tick ? System.Windows.Media.Brushes.AliceBlue : System.Windows.Media.Brushes.Black;
+                foreach (var kvp in _entitiesDictionary)
+                {
+
+                    var entity = kvp.Value;
+                    var progress = ((float)(DateTime.Now - entity.LastUpdate).TotalMilliseconds) / _actualWorldTick;
+                    if (progress <= 1)
+                    {
+                        Canvas.SetLeft(entity.Visual, entity.XPos(progress));
+                        Canvas.SetTop(entity.Visual, entity.YPos(progress));
+                    }
                 }
+                EntityDetails.Items.Refresh();
             }
-            EntityDetails.Items.Refresh();
         }
 
         private void UpdateVisualsSnap()
         {
-            while(_toDo.Any())
+            lock (this)
             {
-                _toDo.Dequeue()();
+                while (_toDo.Any())
+                {
+                    _toDo.Dequeue()();
+                }
+                TurnCounter.Text = _world.TurnCounter.ToString();
+                foreach (var kvp in _entitiesDictionary)
+                {
+                    var entity = kvp.Value;
+                    Canvas.SetLeft(entity.Visual, entity.XPos(1));
+                    Canvas.SetTop(entity.Visual, entity.YPos(1));
+                }
+                EntityDetails.Items.Refresh();
             }
-            TurnCounter.Text = _world.TurnCounter.ToString();
-            foreach (var kvp in _entitiesDictionary)
-            {
-                var entity = kvp.Value;
-                var progress = 1;
-                progress = Math.Min(progress, 1);
-                Canvas.SetLeft(entity.Visual, entity.XPos(progress));
-                Canvas.SetTop(entity.Visual, entity.YPos(progress));
-            }
-            EntityDetails.Items.Refresh();
         }
 
         private void _world_NewEntity(IEntity e)
         {
-            _toDo.Enqueue(() => AddEntity(e));
+            lock (this)
+            {
+                if (!_isFastProcessing)
+                    _toDo.Enqueue(() => AddEntity(e));
+            }
         }
 
         private void _world_EntityVanished(IEntity e)
         {
-
-            _toDo.Enqueue(() => RemoveEntity(e));
+            lock (this)
+            {
+                if (!_isFastProcessing)
+                    _toDo.Enqueue(() => RemoveEntity(e));
+            }
         }
 
 
@@ -287,10 +297,10 @@ namespace EcoSim
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EntityCount)));
         }
 
+        private void RemoveEntity(IEntity e) => RemoveEntity(_entitiesDictionary[e.Id]);
 
-        private void RemoveEntity(IEntity e)
+        private void RemoveEntity(EntityWrapper wrp)
         {
-            var wrp = _entitiesDictionary[e.Id];
             _entitiesDictionary.Remove(wrp.Id);
 
             if (_currentlySelected == wrp)

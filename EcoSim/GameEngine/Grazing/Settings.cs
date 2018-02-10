@@ -69,12 +69,44 @@ namespace GameEngine.Grazing
         /// </summary>
         public int MovementWork = 20;
 
+        /// <summary>
+        /// A number added to all normalized Q-Values when picking an action so that none have 0 probability
+        /// </summary>
+        public float BrainBaseActionScore = 0.1f;
+
+        /// <summary>
+        /// The discount parameter of the Q-Learning formula
+        /// </summary>
+        public float BrainDiscount = 0.8f;
+
+        /// <summary>
+        /// The learning rate parameter of the Q-Learning formula
+        /// </summary>
+        public float BrainLearningRate = 0.8f;
+
+        /// <summary>
+        /// The learning rate is multiplied by this number each turn to decrease it as learning progresses
+        /// </summary>
+        public float BrainLearningRateDamping = 0.999f;
+
+        /// <summary>
+        /// The base action score is multiplied by this number each turn to decrease it as learning progresses
+        /// </summary>
+        public float BrainBaseActionScoreDamping = 0.999f;
+
+        /// <summary>
+        /// All normalized Q-Values are raised to this power before calculating probabilities, increasing the probability contrast between low- and high-rated actions.
+        /// </summary>
+        public float BrainProbabilityExponent = 2;
+
+        
+
+        public string Brain = "Mark1";
+
         private Settings() { }
 
         public static Settings Default = new Settings();
-        public float BrainRandomFactor = 0.001f;
-        public float BrainRandomFactorMultiplier = 0.9999f;
-        public string Brain = "Mark1";
+
 
         public static Settings Load(string fileName)
         {

@@ -11,30 +11,26 @@ namespace EcoSim.Grazing
 {
     class QLearningBrainMk0 : IBrain
     {
-        public object GetInternal()
-        {
-            return _qTable;
-        }
-        public void SetInternal(object o)
-        {
-            if (!(o is Dictionary<Action, float>[] qTable) || qTable.Length != State.MaxValue || qTable.Any(dict => dict == null))
-                throw new InvalidOperationException();
-            _qTable = qTable;
-        }
-
+        public string Name => "Mk0";
         private GameState _state;
         private Random _rng = new Random();
-        public float Discount = 0.8f;
-        public float RandomFactor;
-        public float RandomFactorMultiplier = 0.9999f;
-        public float CloseRange = 21;
-        public float MediumRange = 44;
+
         private Dictionary<Action, float>[] _qTable;
         private float QValue(State s, Action a) => _qTable[s.Compressed].TryGetValue(a, out float v) ? v : 0;
         private Action _lastAction;
         private State _lastState;
         private float _lastHunger;
-        public float StartRandomFactor = 0.001f;
+
+        private float _learningRate;
+        private float _baseActionScore;
+
+        public float ProbabilityExponent { get; set; } = 2f;
+        public float StartLearningRate { get; set; } = 0.5f;
+        public float StartBaseActionScore { get; set; } = 0.1f;
+        public float Discount { get; set; } = 0.8f;
+        public float LearningRateDamping { get; set; } = 0.9999f;
+        public float BaseActionScoreDamping { get; set; } = 0.999f;
+        public float CloseRange { get; set; } = 1f;
 
         public Instruction GetNextInstruction(SensesReport report)
         {
@@ -43,9 +39,10 @@ namespace EcoSim.Grazing
                 _state.ApplyReport(report);
                 //apply the current reward for last action
                 if (_lastHunger > 0)
-                    _qTable[_lastState.Compressed][_lastAction] =
-                        (_lastHunger - _state.Report.Hunger)
-                        + Discount * Action.Possibillities.Max(a => QValue(_state.Value, a));
+                {
+                    _qTable[_lastState.Compressed][_lastAction] = QValue(_lastState, _lastAction) * (1 - _learningRate)
+                        + _learningRate * ((_lastHunger - _state.Report.Hunger) + Discount * Action.Possibillities.Max(a => QValue(_state.Value, a)));
+                }
                 _lastHunger = _state.Report.Hunger;
                 _lastState = _state.Value;
 
@@ -56,13 +53,13 @@ namespace EcoSim.Grazing
 
         private Action PickAction()
         {
-
-            RandomFactor *= RandomFactorMultiplier;
+            _baseActionScore *= BaseActionScoreDamping;
+            _learningRate *= LearningRateDamping;
             IEnumerable<(Action action, float value)> possibilities = Action.Possibillities.
                 Select(a => (action: a, value: QValue(_lastState, a))).OrderByDescending(av => av.value);
             var minv = possibilities.Last().value;
             possibilities = possibilities
-                .Select(av => (av.action, (float)Math.Pow(av.value - minv + RandomFactor, 2)));
+                .Select(av => (av.action, (float)Math.Pow(av.value - minv + _baseActionScore, ProbabilityExponent)));
             var sumv = possibilities.Sum(av => av.value);
             possibilities = possibilities
                 .Select(av => (av.action, av.value / sumv));
@@ -80,7 +77,8 @@ namespace EcoSim.Grazing
         {
             lock (this)
             {
-                RandomFactor = StartRandomFactor;
+                _baseActionScore = StartBaseActionScore;
+                _learningRate = StartLearningRate;
                 _qTable = new Dictionary<Action, float>[State.MaxValue];
                 for (int i = 0; i < State.MaxValue; i++)
                     _qTable[i] = new Dictionary<Action, float>();
@@ -195,10 +193,7 @@ namespace EcoSim.Grazing
             /// 1 bit for each direction indicating presence of food richness within Settings.Close range
             /// </summary>
             public byte CloseFoodDirections;
-            /// <summary>
-            /// 1 bit for each direction indicating presence of food richness within Settings.Medium range
-            /// </summary>
-            public byte MediumFoodDirections;
+
 
 
             /// <summary>
@@ -218,7 +213,6 @@ namespace EcoSim.Grazing
                     {
                         res.FoodRichDirections |= FoodRichScaled(i) ? (byte)(1 << i) : (byte)0;
                         res.CloseFoodDirections |= FoodRich(i, CloseMassesAvailable) ? (byte)(1 << i) : (byte)0;
-                        res.MediumFoodDirections |= FoodRich(i, MediumMassesAvailable) ? (byte)(1 << i) : (byte)0;
                     };
                     res.Hunger = (byte)(Penalty * ((1 << 5) - 1));
                     return res;
@@ -228,7 +222,6 @@ namespace EcoSim.Grazing
 
             public float[] RoundedMassesAvailable;
             public float[] CloseMassesAvailable;
-            public float[] MediumMassesAvailable;
 
             public float Penalty => Report.Hunger;
             public const int Directions = 8;
@@ -242,8 +235,6 @@ namespace EcoSim.Grazing
                 _brain = b;
                 RoundedMassesAvailable = new float[Directions];
                 CloseMassesAvailable = new float[Directions];
-                MediumMassesAvailable = new float[Directions];
-
             }
 
             public void ApplyReport(SensesReport report)
@@ -253,7 +244,6 @@ namespace EcoSim.Grazing
                 {
                     RoundedMassesAvailable[i] = 0;
                     CloseMassesAvailable[i] = 0;
-                    MediumMassesAvailable[i] = 0;
                 }
                 foreach (var e in report.VisibleEntities)
                 {
@@ -262,7 +252,6 @@ namespace EcoSim.Grazing
                     var direction = (int)((relative.VectorAngle() - AnglePerDirection / 2) / AnglePerDirection);
                     RoundedMassesAvailable[direction] = e.AvailableMass / distance;
                     CloseMassesAvailable[direction] += distance > _brain.CloseRange ? 0 : e.AvailableMass;
-                    MediumMassesAvailable[direction] += distance < _brain.CloseRange || distance > _brain.MediumRange ? 0 : e.AvailableMass;
                 }
                 RoundedMassesAvailable = Foods().ToArray();
             }

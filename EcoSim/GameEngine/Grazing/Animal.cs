@@ -30,6 +30,14 @@ namespace GameEngine.Grazing
                 AddDescription("Age", () => Age);
                 AddDescription("Instruction", () => _lastInstruction.ToString());
                 AddDescription("Delta hunger", () => _deltaHunger);
+                AddDescription(" ", () => " ");
+                AddDescription("Brain", () => Brain.Name);
+                AddDescription("BrainBaseActionScore", () => _world.Settings.BrainBaseActionScore);
+                AddDescription("BrainDiscount", () => _world.Settings.BrainDiscount);
+                AddDescription("BrainLearningRate", () => _world.Settings.BrainLearningRate);
+                AddDescription("BrainLearningRateDamping", () => _world.Settings.BrainLearningRateDamping);
+                AddDescription("BrainProbabilityExponent", () => _world.Settings.BrainProbabilityExponent);
+                AddDescription("  ", () => " ");
                 AddDescription("Bite size", () => _world.Settings.BiteSize);
                 AddDescription("Init. plant count", () => _world.Settings.InitialPlantCount);
                 AddDescription("New plant frequency", () => _world.Settings.NewPlantFrequency);
