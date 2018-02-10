@@ -213,6 +213,7 @@ namespace EcoSim
                 Pause.IsEnabled = true;
                 Slower.IsEnabled = true;
                 Faster.IsEnabled = true;
+                _toDo.Clear();
             }
             UpdateVisualsSnap();
         }

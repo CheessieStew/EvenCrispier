@@ -56,6 +56,10 @@
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
-        <RichTextBox VerticalScrollBarVisibility="Visible" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Name="LogBox" VerticalAlignment="Stretch"/>
+        <DockPanel Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Height="auto" VerticalAlignment="Stretch">
+            <TextBlock DockPanel.Dock="Top" Text="Turn of birth | age of death" Background="Gray"/>
+            <RichTextBox VerticalScrollBarVisibility="Visible" Name="LogBox" Height="auto" VerticalAlignment="Stretch"/>    
+        </DockPanel>
+        
     </Grid>
 </Window>

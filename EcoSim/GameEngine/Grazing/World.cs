@@ -126,6 +126,8 @@ namespace GameEngine.Grazing
 
         private void CreatePlant()
         {
+            if (_plantCount == Settings.MaxPlantCount)
+                throw new InvalidOperationException();
             _plantCount++;
             var mass = (int)Roll(Settings.MinPlantMass, Settings.MaxPlantMass);
             var growthRate = (int)Roll(Settings.MinGrowthRate, Settings.MaxGrowthRate);
@@ -133,7 +135,6 @@ namespace GameEngine.Grazing
                 (Action<IEntity>)(plnt =>
             {
                 VanishEntity(plnt);
-                _plantCount--;
             })
             , mass, growthRate);
             if (!(newEntity is Entity e))
@@ -183,8 +184,13 @@ namespace GameEngine.Grazing
 
         private void VanishEntity(IEntity e)
         {
-            _entities.Remove(e.Id);
-            EntityVanished?.Invoke(e);
+            if (_entities.ContainsKey(e.Id))
+            {
+                _entities.Remove(e.Id);
+                EntityVanished?.Invoke(e);
+                if (e.BodyType == "Plant")
+                    _plantCount--;
+            }
         }
 
 
@@ -225,7 +231,6 @@ namespace GameEngine.Grazing
 
         internal IEnumerable<Entity> VisibleEntities(Vector2 position, float sightRange)
         {
-            //todo: some tree stuff if optimised search is needed
             return _entities.Values.Where(e => (e.Position - position).Length() <= sightRange);
         }
     }

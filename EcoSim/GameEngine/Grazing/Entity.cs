@@ -55,6 +55,7 @@ namespace GameEngine.Grazing
         protected virtual void Die()
         {
             Alive = false;
+            Vanish?.Invoke(this);
         }
 
         public abstract void Update();

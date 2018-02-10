@@ -92,12 +92,6 @@ namespace GameEngine.Grazing
                     _lastResult = _lastInstruction.Do(this);
                     Mass -= _world.Settings.PassiveWork;
                 }
-                else
-                {
-                    Mass--;
-                    if (Mass < -20)
-                        Vanish?.Invoke(this);
-                }
                 _deltaHunger -= Mass;
             }
 
@@ -118,7 +112,6 @@ namespace GameEngine.Grazing
             internal override void Kill()
             {
                 Die();
-                Vanish?.Invoke(this);
             }
         }
 
