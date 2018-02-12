@@ -1,0 +1,94 @@
+% Opcje klasy 'iithesis' opisane sa w komentarzach w pliku klasy. Za ich pomoca
+% ustawia sie przede wszystkim jezyk i rodzaj (lic/inz/mgr) pracy, oraz czy na
+% drugiej stronie pracy ma byc skladany wzor oswiadczenia o autorskim wykonaniu.
+\documentclass[declaration,shortabstract,polish,inz,masc]{iithesis}
+\let\lll\relax
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage[toc]{appendix}
+\usepackage{bookmark}
+\usepackage{enumerate}
+\usepackage{csvsimple}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{mathabx}
+\usepackage{enumitem}
+
+\usepackage{pdfpages}
+
+\usepackage{color}
+
+\newlist{interface_descs}{enumerate}{10}
+\setlist[interface_descs]{label*=\arabic*.}
+
+\definecolor{bluekeywords}{rgb}{0.13,0.13,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.9,0,0}
+
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+\usepackage{listings}
+
+\lstdefinelanguage{json_comment}{
+  keywords={true, false},
+  keywordstyle=\color{blue}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=trues,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{blue}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{language=json_comment,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  escapeinside={(*@}{@*)},
+  commentstyle=\color{greencomments},
+  keywordstyle=\color{bluekeywords},
+  stringstyle=\color{redstrings},
+  basicstyle=\fontsize{9}{10}\ttfamily,
+  frame=leftline
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[CO,CE]{\thepage}
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\rightmark}
+\renewcommand{\chaptermark}[1]{\markboth{Tymoteusz Kaczorowski, Instytut Informatyki UWr}{}}
+\renewcommand{\sectionmark}[1]{\markright{Wykorzystanie sztucznej inteligencji w symulowaniu zachowań biologicznych}}
+
+\polishtitle{Wykorzystanie sztucznej inteligencji\fmlinebreak w symulowaniu zachowań biologicznych}
+\englishtitle{Utilizing artificial intelligence to model biological behaviours}
+
+\author{Tymoteusz Kaczorowski}
+\advisor{dr Jakub Kowalski}
+\date{14 lutego 2018 r.} % Data zlozenia pracy
+\transcriptnum{273882} % Numer indeksu
+\advisorgen{dr Jakuba Kowalskiego} % Nazwisko promotora w dopelniaczu
+
+\input{abstracts}
+
+\begin{document}
+
+\input{Chapters/chapter1}
+\input{Chapters/chapter2}
+\input{Chapters/chapter3}
+\input{Chapters/chapter4}
+\input{Chapters/chapter5}
+
+\begin{thebibliography}{1}
+\input{bibitems}
+\end{thebibliography}
+
+
+
+\end{document}

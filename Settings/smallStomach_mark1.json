@@ -1,9 +1,12 @@
 {	
 	"Brain": "Mark1",
 	
-	"InitialPlantCount": 20,
+	"LogDeaths" : false,
 	
-	"MaxPlantCount": 50,
+	"LogHungerEvery": 700,
+	"InitialPlantCount": 25,
+	
+	"MaxPlantCount": 25,
 
 	"NewPlantFrequency": 5,
 
@@ -21,7 +24,7 @@
 
 	"BiteSize": 22,
 
-	"StomachCapacity": 400,
+	"StomachCapacity": 600,
 
 	"SightRange": 88,
 
@@ -29,15 +32,15 @@
 
 	"MovementWork": 3,
 	
-	"BrainBaseActionScore": 0.01,
+	"BrainBaseActionScore": 0.1,
 	
 	"BrainDiscount": 0.9,
 
-	"BrainLearningRate": 0.8,
+	"BrainLearningRate": 0.7,
 
-	"BrainLearningRateDamping": 0.9999,
+	"BrainLearningRateDamping": 0.99999,
 
-	"BrainBaseActionScoreDamping" : 0.995,
+	"BrainBaseActionScoreDamping" : 0.997,
 
 	"BrainProbabilityExponent": 3
 }
