@@ -1,11 +1,9 @@
-﻿using System;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.IO;
 
 namespace GameEngine.Grazing
 {
-    //Pretty much done
     public class Settings
     {
         public bool LogHunger => LogHungerEvery > 0;

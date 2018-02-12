@@ -1,4 +1,4 @@
-\chapter{Wnioski}
+\chapter{Eksperymenty}
 W ramach testów kontrolera przygotowałem kilka zestawów ustawień. W tym rozdziale opiszę, jak zaprojektowana przeze mnie sztuczna inteligencja radzi sobie w różnych środowiskach.
 
 Parametry algorytmu uczącego były dobierane do wymyślonych ustawień świata w sposób eksperymentalny. Ostateczne pliki ustawień uwzględnione w tej pracy zawierają najlepsze z wypróbowanych parametrów.
@@ -7,6 +7,8 @@ Parametry algorytmu uczącego były dobierane do wymyślonych ustawień świata 
 Te ustawienia tworzą dość prosty świat - osiołek może zadomowić się w pobliżu jednego ostu i odżywiać się nim w nieskończoność, bo w żadnej turze nie zużywa więcej energii, niż najmniejszy możliwy przyrost masy rośliny. I do takiej właśnie strategii dochodzi za każdym razem kontroler \textit{Mark1}.
 \begin{figure}[H]
     \centering
+    Stan żołądka osiołka względem liczby tur poświęconych na uczenie AI
+    \\(częstotliwość próbkowania: raz na 500 tur oraz przy każdym zgonie)
     \includegraphics[scale=0.6]{Chapters/simple_mk1_hunger}
 \end{figure}
 
@@ -15,11 +17,13 @@ Na wykresie narysowane są trzy łamane odpowiadające trzem różnym uruchomien
 Z rysunku można wywnioskować, że różne uruchomienia dochodzą do strategii optymalnej w różnym czasie. Mimo to można dostrzec, że z upływem czasu zagęszczenie zgonów się zmniejsza, a wykres zaczyna oscylować w okolicach wyższych wartości. Podobne wnioski można odnieść przy wszystkich innych ustawieniach, więc dla czytelności w następnych wykresach przedstawiał będę tylko dwa uruchomienia.
 
 \begin{figure}[H]
-    \centering
+    \centering    
+    Stan żołądka osiołka względem liczby tur poświęconych na uczenie AI
+    \\(częstotliwość próbkowania: raz na 500 tur oraz przy każdym zgonie)
     \includegraphics[scale=0.6]{Chapters/simple_mk0_hunger}
 \end{figure}
 
-Ten wykres przedstawia dwa uruchomienia z tymi samymi ustawieniami świata dla kontrolera \textit{Mark0}. Ze względu na fakt, że kontroler ten nie analizuje ostów znajdujących się poza zasięgiem interakcji nie dochodzi on do dokładnie tego samego stanu, co \textit{Mark1}. Świat budowany przez te ustawienia nie ma dużego zagęszczenia roślin, przez co częstokroć gdy błądzący osiołek w końcu natrafia na jedną zjada ją w całości.
+Ten wykres przedstawia dwa uruchomienia z tymi samymi ustawieniami świata dla kontrolera \textit{Mark0}. Ze względu na fakt, że kontroler ten nie analizuje ostów znajdujących się poza zasięgiem interakcji nie dochodzi on do dokładnie tego samego stanu, co \textit{Mark1}. Świat budowany przez te ustawienia nie ma dużego zagęszczenia roślin. Oznacza to, że częstokroć gdy błądzący osiołek w końcu natrafia na jedną zjada ją w całości.
 
 Mimo ograniczeń kontrolera, w każdej próbie uruchomienia programu na tych ustawieniach osiąga on stan, w którym osiołek już więcej nie umiera.
 
@@ -30,6 +34,9 @@ Sprawę ułatwia fakt, że osiołek nigdy nie zjada żadnej rośliny w całości
 
 \begin{figure}[H]
     \centering
+    
+    Stan żołądka osiołka względem liczby tur poświęconych na uczenie AI
+    \\(częstotliwość próbkowania: raz na 700 tur oraz przy każdym zgonie)
     \includegraphics[scale=0.6]{Chapters/smallStomach_mk1_hunger}
 \end{figure}
 
@@ -39,22 +46,25 @@ Ciekawym jest, że w przeciwieństwie do ustawień \textit{simple} stan żołąd
 
 \begin{figure}[H]
     \centering
+    Stan żołądka osiołka względem liczby tur poświęconych na uczenie AI
+    \\(częstotliwość próbkowania: raz na 700 tur oraz przy każdym zgonie)
     \includegraphics[scale=0.6]{Chapters/smallStomach_mk0_hunger}
 \end{figure}
 
 Podobnie jak w przypadku\textit{Mark1}, testy kontrolera \textit{Mark0} nie wykazały dużej tendencji wzrostowej w jakości strategii względem czasu, aż do osiągnięcia strategii pozwalającej na nieśmiertelność. Także i on zależnie od uruchomienia osiąga stany, w których stan żołądka oscyluje wokół różnych wartości.
 
-\texit{Mark0} osiąga jednak strategię efektywną znacznie szybciej - mniejsza liczba rozróżnianych stanów wydaje się być w przypadku tych ustawień zaletą. Analizowanie odległych roślin nie przynosi tu korzyści, za to zwiększa czas potrzebny na naukę.
+\textit{Mark0} osiąga jednak strategię efektywną znacznie szybciej - mniejsza liczba rozróżnianych stanów wydaje się być w przypadku tych ustawień zaletą. Analizowanie odległych roślin nie przynosi tu korzyści, za to zwiększa czas potrzebny na naukę.
 
 \section{Ustawienia \textit{oneBite\_mk1}}
-To najtrudniejsze z przygotowanych przeze mnie ustawień. Wszystkie rośliny mają jednakową masę, wystarczająco małą by osiołek mógł zjeść je w jednej turze i nie regenerują się. Oznacza to, że zjedzenie rośliny często prowadzi do mało korzystnego stanu, w którym trzeba się przemieścić, by znaleźć kolejną. Trudno zatem znaleźć odpowiednie parametry - mały \textbf{Discount} prowadzi do kontrolera, który preferuje się nie przemieszczać, zaś duży zmniejsza atrakcyjność jedzenia.
+To najtrudniejsze z przygotowanych przeze mnie ustawień. Wszystkie rośliny mają jednakową masę, wystarczająco małą by osiołek mógł zjeść je w jednej turze i nie regenerują się. Oznacza to, że zjedzenie rośliny często prowadzi do mało korzystnego stanu, w którym trzeba się przemieścić, by znaleźć kolejną. Trudno zatem znaleźć odpowiednie parametry -- mały \textbf{Discount} prowadzi do kontrolera, który preferuje się nie przemieszczać, zaś duży zmniejsza atrakcyjność jedzenia.
+
+Spośród wszystkich sprawdzonych ustawień \textit{oneBite} daje, po nauczeniu, najciekawszy do obserwowania kontroler, ponieważ zasady świata zmuszają go do nauczenia się, jak radzić sobie w zmiennym środowisku i systematycznie odnajdywać nowe źródła pożywienia, gdy dotychczas wykorzystywane się wyczerpią.
 \begin{figure}[H]
     \centering
+    Stan żołądka osiołka względem liczby tur poświęconych na uczenie AI
+    \\(częstotliwość próbkowania: raz na 1000 tur oraz przy każdym zgonie)
     \includegraphics[scale=0.6]{Chapters/oneBite_mk1}
 \end{figure}
 Tym razem wszystkie uruchomienia dają bardzo podobne wykresy, więc dla czytelności przedstawione zostało tylko jedno. Można dostrzec mniejsze zagęszczenie zgonów wraz z czasem nauki, co sugeruje dążenie do efektywnej strategii. Mimo to w żadnym z wykonanych przeze mnie testów najdłuższy zarejestrowany żywot nie przekraczał 400 tysięcy tur.
 
-Kontroler \textit{Mark0} nie daje dla tych ustawień żadnych ciekawych wyników.
-
-\section{Podsumowanie}
-TODO: podsumowanie
+Kontroler \textit{Mark0} nie daje dla ustawień \textit{oneBite} satysfakcjonujących wyników - żaden zarejestrowany przeze mnie żywot nie przekroczył 100 tysięcy tur, a zagęszczenie zgonów w czasie nie maleje z czasem.

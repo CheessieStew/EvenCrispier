@@ -3,10 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Entity = GameEngine.Grazing.Entity;
 namespace EcoSim.Grazing
 {
     class QLearningBrainMk0 : IBrain

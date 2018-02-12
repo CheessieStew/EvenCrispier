@@ -4,9 +4,9 @@
 Aplikacja udostępnia prostą wizualizację oraz metody kontrolowania i podglądu stanu symulacji. Ten rozdział opisuje interfejs, obsługę i działanie aplikacji.
 
 \section{Działanie aplikacji}
-Po uruchomieniu użytkownik proszony jest o wybranie pliku \texttt{.json} z ustawieniami. Następnie tworzona jest instancja kontrolera osiołka i uruchamiane są zadania cykliczne: odświeżanie grafiki i obliczanie kolejnych tur symulacji. Program przyjmuje jeden, opcjonalny argument wywołania, liczbę całkowitą określającą liczbę odświeżeń grafiki na sekundę. Wartość domyślna wynosi 20.
+Po uruchomieniu użytkownik proszony jest o wybranie pliku \texttt{.json} z ustawieniami. Następnie tworzona jest instancja kontrolera osiołka i uruchamiane są zadania cykliczne: odświeżanie grafiki i obliczanie kolejnych tur symulacji. Program przyjmuje jeden, opcjonalny argument wywołania: liczbę całkowitą określającą liczbę odświeżeń grafiki na sekundę. Wartość domyślna tego argumentu wynosi 20.
 
-Gdy nastąpi śmierć osiołka symulacja jest resetowana, ale licznik tur i kontroler zachowują swój stan.
+W momencie śmierci osiołka symulacja jest resetowana, ale licznik tur i kontroler zachowują swoje stany.
 
 \clearpage
 
@@ -24,7 +24,7 @@ Gdy nastąpi śmierć osiołka symulacja jest resetowana, ale licznik tur i kont
     \item Plansza reprezentująca stan symulacji.
     \item Szczegóły obecnie wybranego bytu. Byt można wybrać klikając go na planszy lub na liście bytów.
     \item Lista bytów znajdujących się na planszy
-    \item Przycisk pozwalający wywołać metodę \textit{Reset()} na kontrolerze osiołka
+    \item Przycisk pozwalający wywołać metodę \textit{Reset()} na kontrolerze osiołka, która ponownie inicjalizuje jego stan wartościami takimi, jak na początku
     \item Przycisk pozwalający natychmiastowo zabić obecną instancję osiołka.
 \end{interface_descs}
 
@@ -35,15 +35,22 @@ Symulacja oraz kontroler są parametryzowane plikiem \texttt{.json}. Poniżej pr
 \begin{lstlisting}[language=json_comment]
 {
 "Brain": "Mark1", //"Mark1" lub "Mark0", wybiera rodzaj kontrolera
-"LogDeaths" : false, //wartosc true sprawia, ze po kazdej smierci Osiolka zalogowana zostanie tura jego urodzin i wiek w momencie zgonu
-"LogHungerEvery": 20, //loguje stan zoladka Osiolka co kazde LogHungerEvery tur. Wartosc 0 wylacza te opcje.
-"InitialPlantCount": 20, //liczba roslin pojawiajaca sie na poczatku symulacji
-"MaxPlantCount": 50, //maksymalna liczba roslin na planszy
-"NewPlantFrequency": 5, //liczba tur miedzy pojawieniami sie nowych roslin
-"MinPlantMass": 100, //dolna granica przedzialu, z ktorego losowana jest maksymalna masa rosliny
-"MaxPlantMass": 500, //gorna granica w/w przedzialu
-"MinGrowthRate": 30, //dolna granica przedzialu, z ktorego losowane jest RegrowthRate rosliny
-"MaxGrowthRate": 50, //gorna granica w/w przedzialu
+
+"LogDeaths" : false, //wartość true sprawia, że po każdej śmierci osiołka zalogowana zostanie tura jego urodzin i wiek w momencie zgonu
+
+"LogHungerEvery": 20, //loguje stan żołądka osiołka co każde LogHungerEvery tur. Wartość 0 wyłącza tę opcję.
+
+"InitialPlantCount": 20, //liczba roślin pojawiająca się na początku symulacji
+
+"MaxPlantCount": 50, //maksymalna liczba roślin na planszy
+
+"NewPlantFrequency": 5, //liczba tur między pojawieniami się nowych roślin
+
+"MinPlantMass": 100, //dolna granica przedziału, z którego losowana jest maksymalna masa rośliny
+"MaxPlantMass": 500, //górna granica w/w przedziału
+
+"MinGrowthRate": 30, //dolna granica przedziału, z którego losowane jest RegrowthRate rośliny
+"MaxGrowthRate": 50, //górna granica w/w przedziału
 
 // opisane w rozdz. 2 pracy:
 "MovementSpeed": 20,         

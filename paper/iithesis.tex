@@ -30,7 +30,6 @@
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
 
 \usepackage{listings}
-
 \lstdefinelanguage{json_comment}{
   keywords={true, false},
   keywordstyle=\color{blue}\bfseries,
@@ -44,19 +43,38 @@
   morestring=[b]"
 }
 
-\lstset{language=json_comment,
+\lstset{
+  language=json_comment,
   showspaces=false,
   showtabs=false,
   breaklines=true,
   showstringspaces=false,
   breakatwhitespace=true,
-  escapeinside={(*@}{@*)},
-  commentstyle=\color{greencomments},
   keywordstyle=\color{bluekeywords},
   stringstyle=\color{redstrings},
   basicstyle=\fontsize{9}{10}\ttfamily,
-  frame=leftline
+  frame=leftline,
+  extendedchars=\true,
+  literate={ą}{{\k{a}}}1
+           {Ą}{{\k{A}}}1
+           {ę}{{\k{e}}}1
+           {Ę}{{\k{E}}}1
+           {ó}{{\'o}}1
+           {Ó}{{\'O}}1
+           {ś}{{\'s}}1
+           {Ś}{{\'S}}1
+           {ł}{{\l{}}}1
+           {Ł}{{\L{}}}1
+           {ż}{{\.z}}1
+           {Ż}{{\.Z}}1
+           {ź}{{\'z}}1
+           {Ź}{{\'Z}}1
+           {ć}{{\'c}}1
+           {Ć}{{\'C}}1
+           {ń}{{\'n}}1
+           {Ń}{{\'N}}1
 }
+\lstset{inputencoding=ansinew}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -84,10 +102,10 @@
 \input{Chapters/chapter3}
 \input{Chapters/chapter4}
 \input{Chapters/chapter5}
+\input{Chapters/chapter6}
 
-\begin{thebibliography}{1}
-\input{bibitems}
-\end{thebibliography}
+  \bibliographystyle{plain}
+  \bibliography{iithesis} 
 
 
 
