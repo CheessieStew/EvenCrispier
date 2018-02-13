@@ -4,7 +4,7 @@
 Aplikacja udostępnia prostą wizualizację oraz metody kontrolowania i podglądu stanu symulacji. Ten rozdział opisuje interfejs, obsługę i działanie aplikacji.
 
 \section{Działanie aplikacji}
-Po uruchomieniu użytkownik proszony jest o wybranie pliku \texttt{.json} z ustawieniami. Następnie tworzona jest instancja kontrolera osiołka i uruchamiane są zadania cykliczne: odświeżanie grafiki i obliczanie kolejnych tur symulacji. Program przyjmuje jeden, opcjonalny argument wywołania: liczbę całkowitą określającą liczbę odświeżeń grafiki na sekundę. Wartość domyślna tego argumentu wynosi 20.
+Po uruchomieniu użytkownik proszony jest o wybranie pliku \texttt{.json} z ustawieniami. Następnie tworzona jest instancja kontrolera osiołka i uruchamiane są zadania cykliczne: odświeżanie grafiki i obliczanie kolejnych tur symulacji. Program przyjmuje jeden opcjonalny argument wywołania: liczbę całkowitą określającą liczbę odświeżeń grafiki na sekundę. Wartość domyślna tego argumentu wynosi 20.
 
 W momencie śmierci osiołka symulacja jest resetowana, ale licznik tur i kontroler zachowują swoje stany.
 
@@ -16,15 +16,15 @@ W momencie śmierci osiołka symulacja jest resetowana, ale licznik tur i kontro
     \includegraphics[scale=0.55]{Chapters/interface_annotated}
     \end{figure}
 \begin{interface_descs}
-    \item Nazwa wybranego pliku z ustawieniami
+    \item Nazwa wybranego pliku z ustawieniami.
     \item Checkbox pozwalający wyłączyć odświeżanie grafiki i obliczać kolejne tury symulacji tak szybko, jak jest to możliwe.
     \item Przyciski kontrolujące częstotliwość obliczania kolejnych tur symulacji.
     \item Licznik tur. Przycisk \textit{+1} pozwala obliczyć kolejną turę symulacji gdy \textbf{Timescale} jest równe 0. Przycisk \textit{=0} resetuje licznik tur.
     \item Log, w którym pojawiają się wiadomości tworzone przez symulację. W przykładzie jest to bieżąca tura i stan żołądka osiołka wypisywane co 20 tur.
     \item Plansza reprezentująca stan symulacji.
     \item Szczegóły obecnie wybranego bytu. Byt można wybrać klikając go na planszy lub na liście bytów.
-    \item Lista bytów znajdujących się na planszy
-    \item Przycisk pozwalający wywołać metodę \textit{Reset()} na kontrolerze osiołka, która ponownie inicjalizuje jego stan wartościami takimi, jak na początku
+    \item Lista bytów znajdujących się na planszy.
+    \item Przycisk pozwalający wywołać metodę \textit{Reset()} na kontrolerze osiołka, która ponownie inicjalizuje jego stan wartościami początkowymi.
     \item Przycisk pozwalający natychmiastowo zabić obecną instancję osiołka.
 \end{interface_descs}
 
@@ -49,7 +49,7 @@ Symulacja oraz kontroler są parametryzowane plikiem \texttt{.json}. Poniżej pr
 "MinPlantMass": 100, //dolna granica przedziału, z którego losowana jest maksymalna masa rośliny
 "MaxPlantMass": 500, //górna granica w/w przedziału
 
-"MinGrowthRate": 30, //dolna granica przedziału, z którego losowane jest RegrowthRate rośliny
+"MinGrowthRate": 30, //dolna granica przedziału, z którego losowany jest parametr RegrowthRate rośliny
 "MaxGrowthRate": 50, //górna granica w/w przedziału
 
 // opisane w rozdz. 2 pracy:

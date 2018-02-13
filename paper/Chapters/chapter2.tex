@@ -9,7 +9,7 @@ Wszystkie byty posiadają następujące cechy:
 \end{enumerate}
 
 \subsection{Osiołek}
-Osiołek jest bytem kontrolowanym przez gracza. W danej turze na planszy znajduje się dokładnie jeden osiołek. Osiołek posiada następujące cechy zdefiniowane w ustawieniach [\ref{fig:example_settings}]:
+Osiołek jest bytem kontrolowanym przez gracza. W danej turze na planszy znajduje się dokładnie jeden osiołek. Osiołek posiada następujące cechy zdefiniowane w ustawieniach [sekcja \ref{fig:example_settings}]:
 \begin{enumerate}    
     \item \textbf{Mass} -- masa, która opisuje stopień wypełnienia żołądka i umożliwiająca osiołkowi funkcjonowanie poprzez spalanie jej
     \item \textbf{MovementSpeed} -- maksymalny dystans, który może pokonać w ciągu tury
@@ -28,32 +28,32 @@ Osiołek żywi się ostem. Na planszy może znajdować się co najwyżej określ
     \item \textbf{MaxMass} -- maksymalna masa, do której roślina może urosnąć
     \item \textbf{RegrowthRate} -- stały przyrost masy na turę
 \end{enumerate}
-Maksymalna masa i przyrost masy na turę danej rośliny są losowane z rozkładem jednostajnym na przedziałach zdefiniowanych w ustawieniach [\ref{fig:example_settings}]. Początkowa masa danej rośliny równa jest jej masie maksymalnej.
+Maksymalna masa i przyrost masy na turę danej rośliny są losowane z rozkładem jednostajnym na przedziałach zdefiniowanych w ustawieniach [sekcja \ref{fig:example_settings}]. Początkowa masa ostu równa jest jego masie maksymalnej.
 
 \section{Początek gry}
-Przed pierwszą turą w losowych miejscach tworzone jest tyle roślin, ile zdefiniowane jest w ustawieniach. Następnie w losowym miejscu umieszczany jest osiołek, którego masa ustawiana jest na połowę maksymalnej.
+Przed pierwszą turą w losowych miejscach tworzone jest tyle roślin, ile wskazują ustawienia. Następnie w losowym miejscu umieszczany jest osiołek, którego początkowa masa wynosi połowę maksymalnej.
 
 \section{Przebieg gry}
 Każda tura przebiega następująco:
 \begin{enumerate}    
-    \item Wszystkie rośliny, których obecna masa jest większa niż zero zwiększają swoją masę w oparciu o \textbf{RegrowthRate}, nie przekraczając \textbf{MaxMass}
+    \item Wszystkie rośliny, których obecna masa jest większa niż zero zwiększają swoją masę w oparciu o \textbf{RegrowthRate}, nie przekraczając \textbf{MaxMass}.
     \item Wszyskie byty, których masa nie przekracza zera umierają i znikają. Jeśli umiera osiołek symulacja jest resetowana.
-    \item Osiołek otrzymuje opis otoczenia i swojego stanu
-    \item Kontroler wybiera akcję dla osiołka w oparciu o ten opis
+    \item Osiołek otrzymuje opis otoczenia i swojego stanu.
+    \item Kontroler wybiera akcję dla osiołka w oparciu o ten opis.
     \item Osiołek wykonuje akcję i spala część swojej masy określoną wzorem:
 
-     $\textbf{PassiveWork} + \textbf{MovementWork} \cdot \frac{\textit{distance}}{\textbf{MovementSpeed}}$, gdzie \textit{distance} to dystans przebyty w danej turze
+     $\textbf{PassiveWork} + \textbf{MovementWork} \cdot \frac{\textit{distance}}{\textbf{MovementSpeed}}$, gdzie \textit{distance} to dystans przebyty w danej turze.
     \item Jeżeli liczba roślin na planszy nie przekracza maksymalnej, w losowym miejscu na planszy pojawia się nowa roślina, nie częściej niż raz na liczbę tur opisaną w ustawieniach.
 \end{enumerate}
 
 \section{Akcje}
 W każdej turze siołek może wykonać jedną z poniższych akcji:
 \begin{enumerate}    
-    \item Pominięcie tury
-    \item Próba zjedzenia wybranej rośliny, która przekazuje część swojej masy osiołkowi jeśli ten znajduje się w odpowiednim zasięgu. Ilość zaabsorbowanej masy wynosi 
+    \item Pominięcie tury.
+    \item Próba zjedzenia wybranej rośliny, która przekazuje część swojej masy osiołkowi jeśli ten znajduje się w odpowiednim zasięgu. Ilość zaabsorbowanej masy wynosi.
     
     $min(\textbf{BiteSize}, \textbf{plant.Mass}, \textbf{StomachCapacity - donkey.Mass})$
-    \item Poruszenie się w stronę zadanego punktu o wybrany dystans z zakresu $[0,\textbf{MovementSpeed}]$
+    \item Poruszenie się w stronę zadanego punktu o wybrany dystans z zakresu $[0,\textbf{MovementSpeed}]$.
 \end{enumerate}
 
 

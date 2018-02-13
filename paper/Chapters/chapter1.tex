@@ -1,9 +1,11 @@
 \chapter{Wstęp}
-W ramach tej pracy stworzyłem grę przedstawiającą uproszczony model środowiska naturalnego, której przeznaczeniem jest testowanie metod sztucznej inteligencji. Aplikacja pozwala kontrolować stan symulacji i obserwować, jak AI uczy się grać optymalnie.
+W ramach tej pracy stworzyłem grę przedstawiającą uproszczony model środowiska naturalnego, której przeznaczeniem jest testowanie metod sztucznej inteligencji w celu modelowania zachowań biologicznych. Aplikacja pozwala kontrolować stan symulacji i obserwować, jak AI uczy się grać optymalnie.
 
 Agentem w tej grze jest osiołek, którego zadaniem jest przeżycie odżywiając się ostem. Poczynaniami osiołka kieruje kontroler oparty o algorytm Q-learning \cite{wiki:Qlearning}, który jest odmianą uczenia ze wzmocnieniem (ang. \textit{reinforcement learning}) \cite{Sutton1998Introduction}. Metoda ta polega na uczeniu się optymalnych zachowań przez analizę nagród i kar płynących z podejmowanych decyzji i jest ważną gałęzią uczenia maszynowego \cite{Sutton1988Learning}.  
 
-Wartymi wspomnienia przykładami zastosowania uczenia ze wzmocnieniem są na przykład TD-Gammon \cite{Tesauro1994TDGammon}, który nauczył się grać w grę Backgammon w oparciu o jedynie wyniki gier rozgrywanych z samym sobą, czy AlphaGo, który w 2016 roku był najlepszym programem grającym w Go \cite{Silver2016Mastering}, a jego ostatnia wersja korzystająca z czystego RL (bez wiedzy ludzkich ekspertów wykorzystywanej przez wersję z 2016) wygrywa z poprzednią 100 na 100 gier \cite{silver2017mastering}. Innym znanym zastosowaniem uczenia ze wzmocnieniem jest gra w szachy -- przykładem jest program KnightCap wykorzystujący algorytm TDLeaf($\lambda$) \cite{Baxter2000Learning}.
+Wartymi wspomnienia przykładami zastosowania uczenia ze wzmocnieniem jest na przykład TD-Gammon \cite{Tesauro1994TDGammon}, który nauczył się grać w grę Backgammon w oparciu o jedynie wyniki gier rozgrywanych z samym sobą, czy AlphaGo, który w 2016 roku był najlepszym programem grającym w Go \cite{Silver2016Mastering}
+
+Ostatnia wersja AlphaGo, korzystająca z czystego RL (bez wiedzy ludzkich ekspertów wykorzystywanej przez wersję z 2016) wygrywa z poprzednią 100 na 100 gier \cite{silver2017mastering}. Innym znanym zastosowaniem uczenia ze wzmocnieniem jest gra w szachy -- przykładem jest program KnightCap wykorzystujący algorytm TDLeaf($\lambda$) \cite{Baxter2000Learning}.
 
 
 \section{Motywacja}
@@ -20,6 +22,6 @@ Na potrzeby realizacji celu powstały trzy elementy:
 \end{enumerate}
 
 \section{Narzędzia}
-Projekt w całości został zrealizowany w języku C\# z wykorzystaniem silnika WPF do części wizualnej.
+Projekt w całości został zrealizowany w języku C\# z wykorzystaniem silnika Windows Presentation Foundation do części wizualnej.
 
 

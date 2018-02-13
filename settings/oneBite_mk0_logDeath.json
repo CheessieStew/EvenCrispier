@@ -1,9 +1,9 @@
 {	
-	"Brain": "Mark1",
+	"Brain": "Mark0",
 	
-	"LogDeaths" : false,
+	"LogDeaths" : true,
 	
-	"LogHungerEvery": 5000,
+	"LogHungerEvery": 0,
 	
 	"InitialPlantCount": 250,
 	
